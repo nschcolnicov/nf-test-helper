@@ -5,7 +5,7 @@
 3. Then nf-test test on the generated `.nf.test` file redirecting stdout and stdout to a new file. i.e `nf-test test tests/test.nf.test > nf-test.out 2>&1`.
 4. Run the `snap_out_checker.py` to generate a table that will contain a table with the comparsion of the md5sums of all the files used in the snapshot.
 5. Finally run `test_updater.py` to update the generated `.nf.test` file replacing the md5sum check with only a `.exists()` assertion for undeterministic files.
-6. Loop around steps 2 to 4 until the nf-test.out file contains no mismatching md5sums.
+6. Loop around steps 3 to 5 until the nf-test.out file contains no mismatching md5sums.
 
 
 ## nf-test-gen.py
