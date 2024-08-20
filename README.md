@@ -1,10 +1,11 @@
 # Nextflow Test Generator
 
-1. First run the `nf-test-gen.py` to initialize the nf-test for all of the files found in the output directory. This will output a `.nf.test` file.
-2. Then run nf-test test on the generated `.nf.test` file redirecting stdout and stdout to a new file. i.e `nf-test test tests/test.nf.test > nf-test.out 2>&1`.
-3. Then run the `snap_out_checker.py` to generate a table that will contain a table with the comparsion of the md5sums of all the files used in the snapshot.
-4. Finally run `test_updater.py` to update the generated `.nf.test` file replacing the md5sum check with only a `.exists()` assertion for undeterministic files.
-5. Loop around steps 2 to 4 until the nf-test.out file contains no mismatching md5sums.
+1. Run the nextflow pipeline with the test profile for which you want to generate an nf-test.
+2. Run the `nf-test-gen.py` to initialize the nf-test for all of the files found in the output directory. This will output a `.nf.test` file.
+3. Then nf-test test on the generated `.nf.test` file redirecting stdout and stdout to a new file. i.e `nf-test test tests/test.nf.test > nf-test.out 2>&1`.
+4. Run the `snap_out_checker.py` to generate a table that will contain a table with the comparsion of the md5sums of all the files used in the snapshot.
+5. Finally run `test_updater.py` to update the generated `.nf.test` file replacing the md5sum check with only a `.exists()` assertion for undeterministic files.
+6. Loop around steps 2 to 4 until the nf-test.out file contains no mismatching md5sums.
 
 
 ## nf-test-gen.py
