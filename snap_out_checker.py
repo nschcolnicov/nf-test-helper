@@ -7,7 +7,7 @@ output_file = 'output.csv'  # Replace with your desired output file
 
 with open(input_file, 'r') as infile, open(output_file, 'w', newline='') as outfile:
     writer = csv.writer(outfile)
-    writer.writerow(['file1', 'md5_1', 'file2', 'md5_2', 'Match'])  # Header row
+    writer.writerow(['test_name','file1', 'md5_1', 'file2', 'md5_2', 'Match'])  # Header row
     
     for line in infile:
         if "Test Workflow main.nf" in line:
