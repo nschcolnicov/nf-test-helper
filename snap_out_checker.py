@@ -7,7 +7,7 @@ def main(input_file):
     output_file = 'output.csv'
     rows = []
 
-    # Open the input file and read the data
+    # Read new rows from the input file
     with open(input_file, 'r') as infile:
         test_name = None
 
@@ -24,7 +24,7 @@ def main(input_file):
                 line = line.replace(':md5', '')
                 line = line.strip()
                 fields = re.split(r'[ ,]', line)
-                while '' in fields: fields.remove('')   
+                while '' in fields: fields.remove('')
                 fields.append(test_name)
 
                 if fields:
@@ -39,18 +39,32 @@ def main(input_file):
                 else:
                     print(f'No match found for line: {line.strip()}')
 
-    # Remove duplicate rows
-    unique_rows = list(map(list, set(map(tuple, rows))))
+    # Read existing rows from the output file if it exists
+    if os.path.exists(output_file) and os.path.getsize(output_file) > 0:
+        with open(output_file, 'r') as outfile:
+            reader = csv.reader(outfile)
+            existing_rows = list(reader)
+            header = existing_rows[0]  # Assumes the first row is the header
+            existing_rows = existing_rows[1:]  # Skip header
+    else:
+        existing_rows = []
+        header = ['test_name', 'file1', 'md5_1', 'file2', 'md5_2', 'Match']
 
-    # Open the output file and write the unique data
-    with open(output_file, 'w', newline='') as outfile:
-        writer = csv.writer(outfile)
+    # Combine existing rows with new rows
+    all_rows = existing_rows + rows
 
-        # Write header
-        writer.writerow(['test_name', 'file1', 'md5_1', 'file2', 'md5_2', 'Match'])
+    # Remove duplicates
+    unique_rows = list(map(list, set(map(tuple, all_rows))))
 
-        # Write all unique rows
-        writer.writerows(unique_rows)
+    # Check if there are new rows to append
+    if len(unique_rows) > len(existing_rows):
+        # Write the unique rows to the output file
+        with open(output_file, 'w', newline='') as outfile:
+            writer = csv.writer(outfile)
+            writer.writerow(header)  # Write header
+            writer.writerows(unique_rows)
+    else:
+        print("No new rows to append")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process md5 data and save unique rows to CSV.')
