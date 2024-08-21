@@ -57,7 +57,7 @@ def main(input_file):
     unique_rows = list(map(list, set(map(tuple, all_rows))))
 
     # Check if there are new rows to append
-    if len(unique_rows) > len(existing_rows):
+    if row:
         # Write the unique rows to the output file
         with open(output_file, 'w', newline='') as outfile:
             writer = csv.writer(outfile)
