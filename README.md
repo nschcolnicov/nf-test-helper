@@ -68,6 +68,3 @@ python test_updater.py output.csv tests/test_name.nf.test
 # Repeat steps 3-5 as necessary
 ```
 
-## License
-
-This project is licensed under the MIT License.
