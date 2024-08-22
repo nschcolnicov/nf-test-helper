@@ -3,8 +3,6 @@
 
 ## Next steps
 - [ ] Generate beautify script to sort lines by snapshot group, separating the ones with .exist() from the other ones
-- [X] Update test generation script to split by first subdirectory as well. 
-- [ ] Update usage readme so that it says to run nf-test 10 times twice and then run script for correcting nf-test file.
 
 # Ideas
 - Goal: Have everything run within a tool that should be able to run nextflow and nf-test and iterate so that it generates the nf-test fully automatically.
