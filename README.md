@@ -59,6 +59,7 @@ python nf-test-gen.py ./output test_name 5
 # Step 3: Run the nf-test n times to see which files are deterministic and which ones aren't and save the output
 for i in {1..n}; do
 nf-test test tests/test_name.nf.test >> nf-test.out 2>&1 
+done
 
 # Step 4: Check the md5sums
 python snap_out_checker.py nf-test.out
