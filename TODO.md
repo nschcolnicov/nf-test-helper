@@ -3,7 +3,7 @@
 
 ## Next steps
 - [ ] Generate beautify script to sort lines by snapshot group, separating the ones with .exist() from the other ones
-- [ ] Update test generation script to split by first subdirectory as well
+- [X] Update test generation script to split by first subdirectory as well. 
 - [ ] Update usage readme so that it says to run nf-test 10 times twice and then run script for correcting nf-test file.
 
 # Ideas
