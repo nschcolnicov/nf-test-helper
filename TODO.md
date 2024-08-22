@@ -1,6 +1,14 @@
 
 # TODO for nf-test-helper Development
 
+## Next steps
+- [ ] Generate beautify script to sort lines by snapshot group, separating the ones with .exist() from the other ones
+- [ ] Update test generation script to split by first subdirectory as well
+- [ ] Update usage readme so that it says to run nf-test 10 times twice and then run script for correcting nf-test file.
+
+# Ideas
+- Goal: Have everything run within a tool that should be able to run nextflow and nf-test and iterate so that it generates the nf-test fully automatically.
+
 ## 1. Initial Setup and Execution
 - [ ] Implement a feature to allow the tool to run the Nextflow pipeline using `-profile "$profile_name"` and `--outdir "$outputdir"`.
 - [ ] Update the `nf-test-gen.py` script to automatically read the number of tasks from the Nextflow execution or the trace file.
