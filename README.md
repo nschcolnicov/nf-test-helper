@@ -6,7 +6,7 @@
 ## Scripts
 
 ### 1. nf-test-gen.py
-This script is used to initialize an nf-test file based on the output directory of a Nextflow pipeline. It generates a `.nf.test` file that includes snapshot assertions for all files found in the specified output directory.
+This script is used to initialize an nf-test file based on the output directory of a Nextflow pipeline. It generates an .".nf.test" file that includes detailed snapshot assertions for files both directly in the output_dir and within its subdirectories. It organizes the assertions by first-level directories and their subdirectories
 
 **Usage:**
 ```bash
