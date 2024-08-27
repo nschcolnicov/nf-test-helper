@@ -68,5 +68,7 @@ python snap_out_checker.py nf-test.out
 python test_updater.py output.csv tests/test_name.nf.test
 
 # Repeat steps 3-5 as necessary
+
+## Note: The `output.csv` file generated can then be used as a memory of which files are undeterministic and which files arent't. If the output.csv has been updated with enough nf-test runs, then one can skip the step of running the `nf-test test` command and subsequently the `snap_out_checker.py` script, and just run the `nf-test-gen.py` and `test_updater.py` scripts. This works as long as all of the file names outputted by the new test are already included in the `output.csv` table.
 ```
 
