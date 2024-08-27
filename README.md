@@ -6,16 +6,17 @@
 ## Scripts
 
 ### 1. nf-test-gen.py
-This script is used to initialize an nf-test file based on the output directory of a Nextflow pipeline. It generates an .".nf.test" file that includes detailed snapshot assertions for files both directly in the output_dir and within its subdirectories. It organizes the assertions by first-level directories and their subdirectories
+This script is used to initialize an nf-test file based on the output directory of a Nextflow pipeline. It generates an .".nf.test" file that includes detailed snapshot assertions for files both directly in the output_dir and within its subdirectories. It organizes the assertions by first-level directories and their subdirectories.
 
 **Usage:**
 ```bash
-python nf-test-gen.py <outputDir> <test_name> <number_of_tasks>
+python nf-test-gen.py <outputDir> <test_name> <number_of_tasks> <files_to_exclude>
 ```
 
-- `<outputDir>`: The directory where the output files from the Nextflow pipeline are located.
-- `<test_name>`: A name for the test.
-- `<number_of_tasks>`: The number of tasks expected to have succeeded in the pipeline.
+- `<outputDir>`: *(MANDATORY)* The directory where the output files from the Nextflow pipeline are located.
+- `<test_name>`: *(MANDATORY)* A name for the test.
+- `<number_of_tasks>`: *(MANDATORY)* The number of tasks expected to have succeeded in the pipeline.
+- `<files_to_exclude>` : *(OPTIONAL)* A comma separated string containing the file extensions of files to ignore when generating the .nf-test. Default value is ".json, .html, .log, .png, .svg, .pdf".
 
 ### 2. snap_out_checker.py
 This script processes the output of the `nf-test test` command to generate a table comparing the md5sums of all the files used in the snapshot. The output is saved as a CSV file named `output.csv`.
