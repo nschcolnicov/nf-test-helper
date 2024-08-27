@@ -26,16 +26,39 @@ nextflow_pipeline {{
                 {{ assert workflow.trace.succeeded().size() == {num_tasks} }},
 """.format(test_name=test_name, num_tasks=num_tasks)
 
+    # Snapshot for files directly in the output_dir
+    direct_files = []
+    for root, dirs, files in os.walk(output_dir):
+        if root == output_dir:  # Only consider files directly in output_dir
+            direct_files.extend(files)
+
+    if direct_files:
+        snapshot_direct_files = """
+                {{ assert snapshot(
+                    {files}
+                ).match("outdir") }},
+""".format(
+            files=',\n                    '.join(['path("$outputDir/{f}")'.format(f=f) for f in direct_files])
+        )
+        nf_test_content += snapshot_direct_files
+
     for first_level_dir in os.listdir(output_dir):
         first_level_path = os.path.join(output_dir, first_level_dir)
 
         if first_level_dir == "pipeline_info" or not os.path.isdir(first_level_path):
             continue
 
+        # Snapshot for files in the first level directory
+        all_subdir_files = set()
         snapshot_files = []
         for root, dirs, files in os.walk(first_level_path):
             filtered_files = [f for f in files if not (f.endswith((".json", ".html", ".log", ".png", ".svg", ".pdf")))]
-            snapshot_files.extend([os.path.relpath(os.path.join(root, f), output_dir) for f in filtered_files])
+            for f in filtered_files:
+                relative_path = os.path.relpath(os.path.join(root, f), output_dir)
+                if os.path.dirname(relative_path).startswith(first_level_dir):
+                    all_subdir_files.add(relative_path)
+
+            snapshot_files.extend([os.path.relpath(os.path.join(root, f), output_dir) for f in filtered_files if os.path.dirname(os.path.relpath(os.path.join(root, f), output_dir)) == first_level_dir])
 
         if snapshot_files:
             snapshot_assertion = """
@@ -47,6 +70,27 @@ nextflow_pipeline {{
                 dir=first_level_dir
             )
             nf_test_content += snapshot_assertion
+
+        # Snapshot for each subdirectory in the first level directory
+        for sub_dir in next(os.walk(first_level_path))[1]:
+            sub_dir_path = os.path.join(first_level_path, sub_dir)
+            snapshot_subdir_files = []
+
+            for root, dirs, files in os.walk(sub_dir_path):
+                filtered_files = [f for f in files if not (f.endswith((".json", ".html", ".log", ".png", ".svg", ".pdf")))]
+                snapshot_subdir_files.extend([os.path.relpath(os.path.join(root, f), output_dir) for f in filtered_files])
+
+            if snapshot_subdir_files:
+                snapshot_subdir_assertion = """
+                {{ assert snapshot(
+                    {files}
+                ).match("{dir}_{subdir}") }},
+""".format(
+                    files=',\n                    '.join(['path("$outputDir/{f}")'.format(f=f) for f in snapshot_subdir_files]),
+                    dir=first_level_dir,
+                    subdir=sub_dir
+                )
+                nf_test_content += snapshot_subdir_assertion
 
     nf_test_content += """
             )
