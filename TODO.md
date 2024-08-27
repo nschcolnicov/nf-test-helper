@@ -32,10 +32,8 @@
 ## 5. Workflow and User Options
 - [ ] Implement the entire process as an automated workflow that loops through the steps until successful.
 - [ ] Add an option for users to specify which arguments to run in `nf-test`.
-- [ ] By default, exclude certain file extensions; add an argument allowing users to modify which extensions to exclude.
+- [X] By default, exclude certain file extensions; add an argument allowing users to modify which extensions to exclude.
 - [ ] Implement a feature to delete the `.nf-test` folder between runs to prevent running out of disk space.
 
 ## 6. Managing Multiple Tests
-- [ ] When running multiple tests simultaneously:
-  - [ ] Ensure the `test_updater.py` script updates only the lines related to the respective tests based on the `test_name` column in `output.csv`.
-  - [ ] Provide an option to update all lines for a particular file if it fails in any of the tests (as per the current implementation).
+- [ ] If generating an output.csv file with multiple tests at once, add an option to only update the nf-test where the test for a specific file failed instead of updating all of them. One might want to update all nf-tests if one file failed assertions in only one test, since it typically means that the file is generally non-deterministic. 
