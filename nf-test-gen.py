@@ -1,7 +1,7 @@
 import os
 import sys
 
-def generate_nf_test(output_dir, test_name, num_tasks):
+def generate_nf_test(output_dir, test_name, num_tasks, exclude_files):
     nf_test_content = """
 nextflow_pipeline {{
 
@@ -26,6 +26,9 @@ nextflow_pipeline {{
                 {{ assert workflow.trace.succeeded().size() == {num_tasks} }},
 """.format(test_name=test_name, num_tasks=num_tasks)
 
+    # Prepare the list of excluded file extensions
+    exclude_exts = [ext.strip() for ext in exclude_files.split(',')]
+
     # Snapshot for files directly in the output_dir
     direct_files = []
     for root, dirs, files in os.walk(output_dir):
@@ -38,7 +41,9 @@ nextflow_pipeline {{
                     {files}
                 ).match("outdir") }},
 """.format(
-            files=',\n                    '.join(['path("$outputDir/{f}")'.format(f=f) for f in direct_files])
+            files=',\n                    '.join(
+                [f'path("$outputDir/{f}")' for f in direct_files if not any(f.endswith(ext) for ext in exclude_exts)]
+            )
         )
         nf_test_content += snapshot_direct_files
 
@@ -52,7 +57,7 @@ nextflow_pipeline {{
         all_subdir_files = set()
         snapshot_files = []
         for root, dirs, files in os.walk(first_level_path):
-            filtered_files = [f for f in files if not (f.endswith((".json", ".html", ".log", ".png", ".svg", ".pdf")))]
+            filtered_files = [f for f in files if not any(f.endswith(ext) for ext in exclude_exts)]
             for f in filtered_files:
                 relative_path = os.path.relpath(os.path.join(root, f), output_dir)
                 if os.path.dirname(relative_path).startswith(first_level_dir):
@@ -66,7 +71,7 @@ nextflow_pipeline {{
                     {files}
                 ).match("{dir}") }},
 """.format(
-                files=',\n                    '.join(['path("$outputDir/{f}")'.format(f=f) for f in snapshot_files]),
+                files=',\n                    '.join([f'path("$outputDir/{f}")' for f in snapshot_files]),
                 dir=first_level_dir
             )
             nf_test_content += snapshot_assertion
@@ -77,7 +82,7 @@ nextflow_pipeline {{
             snapshot_subdir_files = []
 
             for root, dirs, files in os.walk(sub_dir_path):
-                filtered_files = [f for f in files if not (f.endswith((".json", ".html", ".log", ".png", ".svg", ".pdf")))]
+                filtered_files = [f for f in files if not any(f.endswith(ext) for ext in exclude_exts)]
                 snapshot_subdir_files.extend([os.path.relpath(os.path.join(root, f), output_dir) for f in filtered_files])
 
             if snapshot_subdir_files:
@@ -86,7 +91,7 @@ nextflow_pipeline {{
                     {files}
                 ).match("{dir}_{subdir}") }},
 """.format(
-                    files=',\n                    '.join(['path("$outputDir/{f}")'.format(f=f) for f in snapshot_subdir_files]),
+                    files=',\n                    '.join([f'path("$outputDir/{f}")' for f in snapshot_subdir_files]),
                     dir=first_level_dir,
                     subdir=sub_dir
                 )
@@ -103,8 +108,8 @@ nextflow_pipeline {{
     return nf_test_content
 
 def main():
-    if len(sys.argv) != 4:
-        print("Usage: python generate_nf_test.py <outputDir> <test_name> <number_of_tasks>")
+    if len(sys.argv) not in [4, 5]:
+        print("Usage: python nf-test-gen.py <outputDir> <test_name> <number_of_tasks> [exclude_files]")
         sys.exit(1)
 
     output_dir = sys.argv[1]
@@ -116,11 +121,13 @@ def main():
         print("Error: <number_of_tasks> must be an integer.")
         sys.exit(1)
 
+    exclude_files = sys.argv[4] if len(sys.argv) == 5 else ".json, .html, .log, .png, .svg, .pdf"
+
     if not os.path.isdir(output_dir):
         print(f"Error: The directory {output_dir} does not exist.")
         sys.exit(1)
 
-    nf_test_content = generate_nf_test(output_dir, test_name, num_tasks)
+    nf_test_content = generate_nf_test(output_dir, test_name, num_tasks, exclude_files)
 
     test_filename = f"{test_name}.nf.test"
     try:
